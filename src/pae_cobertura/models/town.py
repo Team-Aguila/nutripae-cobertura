@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 class Town(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    codigo_dane: str = Field(sa_type=String(3), index=True)
+    code: str = Field(sa_type=String(3), index=True)
     name: str = Field(index=True)
 
     department_id: int = Field(foreign_key="department.id")
