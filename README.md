@@ -27,3 +27,9 @@ To update the changelog, please run:
 ```bash
 poetry run cz changelog 
 ```
+
+To create and run migrations please run
+```bash
+poetry run revision --autogenerate -m "your migration comment goes here"
+poetry run alembic upgrade head
+```
