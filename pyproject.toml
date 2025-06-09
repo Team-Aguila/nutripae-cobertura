@@ -22,6 +22,7 @@ packages = [{include = "pae_cobertura", from = "src"}]
 [tool.poetry.group.dev.dependencies]
 commitizen = "^4.8.2"
 pre-commit = "^4.2.0"
+poethepoet = "^0.34.0"
 
 
 [tool.commitizen]
@@ -34,3 +35,8 @@ major_version_zero = true
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poe.tasks]
+dev = "uvicorn pae_cobertura.main:app --reload --app-dir src"
+db-generate = "alembic revision --autogenerate"
+db-migrate = "alembic upgrade head"

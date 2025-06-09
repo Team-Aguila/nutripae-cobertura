@@ -21,3 +21,5 @@
 .env
 
 __pycache__/
+
+client_sdk/
