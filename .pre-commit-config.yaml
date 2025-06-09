@@ -4,8 +4,11 @@ repos:
     rev: v4.6.0
     hooks:
     -   id: check-yaml
+        exclude: ^client_sdk/
     -   id: end-of-file-fixer
+        exclude: ^client_sdk/
     -   id: trailing-whitespace
+        exclude: ^client_sdk/
 -   repo: https://github.com/commitizen-tools/commitizen
     rev: v3.27.0
     hooks:
