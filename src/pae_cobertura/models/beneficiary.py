@@ -19,3 +19,7 @@ class Beneficiary(SQLModel, table=True):
     postal_code: str
     birth_date: datetime
     gender: str
+
+    site_id: int = Field(foreign_key="site.id")
+    site: "Site" = Relationship(back_populates="beneficiaries")
+    

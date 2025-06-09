@@ -4,7 +4,7 @@ from sqlmodel import Field, Relationship, SQLModel, String
 # Para evitar error de "circular import" con las relaciones
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from .institution import Institucion
+    from .institution import Institution
     from .beneficiary import Beneficiary
 
 class Site(SQLModel, table=True):
@@ -16,6 +16,6 @@ class Site(SQLModel, table=True):
     longitude: float
 
     institution_id: int = Field(foreign_key="institution.id")
-    institution: "Institucion" = Relationship(back_populates="sites")
+    institution: "Institution" = Relationship(back_populates="sites")
     
     beneficiaries: List["Beneficiary"] = Relationship(back_populates="site")
