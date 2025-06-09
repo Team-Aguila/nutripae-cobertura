@@ -15,4 +15,15 @@ This is goint to be automatically rejected and you have to use:
 git add .
 poetry run cz commit
 ```
+
+In order to create (only the first time) the change log, please run:
+
+```bash
+poetry run cz changelog --unreleased-version "v0.1.0" 
+```
+
+To update the changelog, please run:
  
+```bash
+poetry run cz changelog 
+```
