@@ -17,5 +17,5 @@ class Site(SQLModel, table=True):
 
     institution_id: int = Field(foreign_key="institution.id")
     institution: "Institution" = Relationship(back_populates="sites")
-    
+
     beneficiaries: List["Beneficiary"] = Relationship(back_populates="site")

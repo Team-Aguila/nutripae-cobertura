@@ -1,7 +1,7 @@
 """Crear estructura inicial
 
 Revision ID: c3c94f71aec0
-Revises: 
+Revises:
 Create Date: 2025-06-08 20:03:36.258444
 
 """

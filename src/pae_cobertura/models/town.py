@@ -14,5 +14,5 @@ class Town(SQLModel, table=True):
 
     department_id: int = Field(foreign_key="department.id")
     department: "Department" = Relationship(back_populates="towns")
-    
+
     institutions: List["Institution"] = Relationship(back_populates="town")

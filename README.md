@@ -1,6 +1,6 @@
 # Cobertura Pae Backend.
 
-This repo uses commitizen and pre-commit packages in order to manage the commit messages and the changelog. 
+This repo uses commitizen and pre-commit packages in order to manage the commit messages and the changelog.
 
 To create a new commit, please do not try to do it manually like:
 
@@ -19,13 +19,13 @@ poetry run cz commit
 In order to create (only the first time) the change log, please run:
 
 ```bash
-poetry run cz changelog --unreleased-version "v0.1.0" 
+poetry run cz changelog --unreleased-version "v0.1.0"
 ```
 
 To update the changelog, please run:
- 
+
 ```bash
-poetry run cz changelog 
+poetry run cz changelog
 ```
 
 To create and run migrations please run

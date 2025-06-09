@@ -6,7 +6,7 @@ services:
     container_name: pae-coberturad-db
     restart: always
     environment:
-      POSTGRES_USER: postgres 
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: pae_cobertura
     ports:

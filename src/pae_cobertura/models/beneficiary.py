@@ -22,4 +22,3 @@ class Beneficiary(SQLModel, table=True):
 
     site_id: int = Field(foreign_key="site.id")
     site: "Site" = Relationship(back_populates="beneficiaries")
-    
