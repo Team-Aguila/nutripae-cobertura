@@ -8,7 +8,7 @@ services:
     environment:
       POSTGRES_USER: postgres 
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: pae_coberturad
+      POSTGRES_DB: pae_cobertura
     ports:
       - "5434:5432"
     volumes:
