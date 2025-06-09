@@ -1,0 +1,24 @@
+[project]
+name = "pae-cobertura"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "srestrero",email = "srestreporo@unal.edu.co"}
+]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi[all] (>=0.115.12,<0.116.0)",
+    "sqlmodel[all] (>=0.0.24,<0.0.25)",
+    "alembic (>=1.16.1,<2.0.0)",
+    "psycopg2-binary (>=2.9.10,<3.0.0)",
+    "python-dotenv (>=1.1.0,<2.0.0)"
+]
+
+[tool.poetry]
+packages = [{include = "pae_cobertura", from = "src"}]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
