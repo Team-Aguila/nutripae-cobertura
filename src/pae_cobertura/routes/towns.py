@@ -86,4 +86,4 @@ def patch_town_endpoint(
             raise HTTPException(status_code=404, detail="Town not found")
         return db_town
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e)) 
+        raise HTTPException(status_code=400, detail=str(e))

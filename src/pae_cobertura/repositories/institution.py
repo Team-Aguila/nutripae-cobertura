@@ -27,4 +27,4 @@ def update_institution(*, session: Session, db_institution: Institution, institu
 
 def delete_institution(*, session: Session, db_institution: Institution):
     session.delete(db_institution)
-    session.commit() 
+    session.commit()

@@ -19,4 +19,4 @@ class TownRead(TownBase):
     id: int
 
 class TownReadWithDetails(TownRead):
-    department_name: str 
+    department_name: str

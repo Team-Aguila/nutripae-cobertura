@@ -89,4 +89,4 @@ def delete_institution_endpoint(
     success = delete_institution_service(session=session, institution_id=institution_id)
     if not success:
         raise HTTPException(status_code=404, detail="Institution not found")
-    return {"message": "Institution deleted successfully"} 
+    return {"message": "Institution deleted successfully"}

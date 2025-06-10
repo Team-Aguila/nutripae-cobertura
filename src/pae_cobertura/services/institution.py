@@ -19,7 +19,7 @@ def create_institution_service(*, session: Session, institution_in: InstitutionC
     # Validar que el town exista
     if not validate_town(session=session, town_id=institution_in.town_id):
         raise ValueError(f"Town with id {institution_in.town_id} does not exist")
-    
+
     db_institution = create_institution(session=session, institution_in=institution_in)
     return InstitutionRead.model_validate(db_institution)
 
@@ -27,7 +27,7 @@ def get_institution_service(*, session: Session, institution_id: int) -> Optiona
     db_institution = get_institution_by_id(session=session, institution_id=institution_id)
     if not db_institution:
         return None
-    
+
     return InstitutionReadWithDetails(
         id=db_institution.id,
         code=db_institution.code,
@@ -61,11 +61,11 @@ def update_institution_service(*, session: Session, institution_id: int, institu
     db_institution = get_institution_by_id(session=session, institution_id=institution_id)
     if not db_institution:
         return None
-    
+
     # Validar que el town exista si se está actualizando
     if institution_in.town_id is not None and not validate_town(session=session, town_id=institution_in.town_id):
         raise ValueError(f"Town with id {institution_in.town_id} does not exist")
-    
+
     db_institution = update_institution(session=session, db_institution=db_institution, institution_in=institution_in)
     return InstitutionRead.model_validate(db_institution)
 
@@ -73,16 +73,16 @@ def patch_institution_service(*, session: Session, institution_id: int, institut
     db_institution = get_institution_by_id(session=session, institution_id=institution_id)
     if not db_institution:
         return None
-    
+
     # Validar que el town exista si se está actualizando
     if institution_in.town_id is not None and not validate_town(session=session, town_id=institution_in.town_id):
         raise ValueError(f"Town with id {institution_in.town_id} does not exist")
-    
+
     # Solo actualizamos los campos que vienen en institution_in
     institution_data = institution_in.model_dump(exclude_unset=True)
     for key, value in institution_data.items():
         setattr(db_institution, key, value)
-    
+
     session.add(db_institution)
     session.commit()
     session.refresh(db_institution)
@@ -92,6 +92,6 @@ def delete_institution_service(*, session: Session, institution_id: int) -> bool
     db_institution = get_institution_by_id(session=session, institution_id=institution_id)
     if not db_institution:
         return False
-    
+
     delete_institution(session=session, db_institution=db_institution)
-    return True 
+    return True

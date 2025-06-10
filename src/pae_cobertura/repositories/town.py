@@ -27,4 +27,4 @@ def update_town(*, session: Session, db_town: Town, town_in: TownUpdate) -> Town
 
 def delete_town(*, session: Session, db_town: Town):
     session.delete(db_town)
-    session.commit() 
+    session.commit()

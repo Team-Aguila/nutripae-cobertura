@@ -26,4 +26,4 @@ class InstitutionRead(InstitutionBase):
 
 class InstitutionReadWithDetails(InstitutionRead):
     town_name: str
-    department_name: str 
+    department_name: str
