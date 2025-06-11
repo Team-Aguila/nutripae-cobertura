@@ -1,46 +1,98 @@
-# pae_cobertura/crud/crud_departamento.py
+from datetime import datetime
 from sqlmodel import Session, select, func
 from pae_cobertura.models.department import Department
 from pae_cobertura.models.town import Town
 from pae_cobertura.schemas.departments import DepartmentCreate, DepartmentUpdate
 
-def create_department(*, session: Session, department_in: DepartmentCreate) -> Department:
-    # Crea una instancia del modelo de BD a partir del schema
-    db_department = Department.model_validate(department_in)
-    session.add(db_department)
-    session.commit()
-    session.refresh(db_department)
-    return db_department
+class DepartmentRepository:
+    def __init__(self, session: Session):
+        self.session = session
 
-def get_department_by_id(*, session: Session, department_id: int) -> Department | None:
-    return session.get(Department, department_id)
+    def create(self, *, department_in: DepartmentCreate) -> dict:
+        db_department = Department.model_validate(department_in)
+        self.session.add(db_department)
+        self.session.commit()
+        self.session.refresh(db_department)
+        
+        department_dict = db_department.model_dump()
+        department_dict["number_of_towns"] = 0
+        
+        return department_dict
 
-def get_all_departments(*, session: Session, skip: int = 0, limit: int = 100) -> list[dict]:
-    # Esta consulta es más compleja para incluir el conteo de municipios
-    statement = (
-        select(
-            Department.id,
-            Department.code,
-            Department.name,
-            func.count(Town.id).label("number_of_towns")
+    def get_by_id(self, *, department_id: int) -> dict | None:
+        department = self.session.get(Department, department_id)
+        if not department:
+            return None
+            
+        statement = (
+            select(func.count(Town.id))
+            .where(Town.department_id == department_id)
         )
-        .outerjoin(Town, Department.id == Town.department_id)
-        .group_by(Department.id)
-        .offset(skip)
-        .limit(limit)
-    )
-    result = session.exec(statement).mappings().all()
-    return result
+        town_count = self.session.exec(statement).first()
+        
+        department_dict = department.model_dump()
+        department_dict["number_of_towns"] = town_count or 0
+        
+        return department_dict
 
-def update_department(*, session: Session, db_department: Department, department_in: DepartmentUpdate) -> Department:
-    update_data = department_in.model_dump(exclude_unset=True)
-    db_department.sqlmodel_update(update_data)
-    session.add(db_department)
-    session.commit()
-    session.refresh(db_department)
-    return db_department
+    def get_all(self, *, skip: int = 0, limit: int = 100) -> list[dict]:
+        town_count = (
+            select(
+                Town.department_id,
+                func.count(Town.id).label("town_count")
+            )
+            .group_by(Town.department_id)
+            .subquery()
+        )
+        
+        statement = (
+            select(
+                Department.id,
+                Department.dane_code,
+                Department.name,
+                Department.created_at,
+                Department.updated_at,
+                func.coalesce(town_count.c.town_count, 0).label("number_of_towns")
+            )
+            .outerjoin(town_count, Department.id == town_count.c.department_id)
+            .order_by(Department.name)
+            .offset(skip)
+            .limit(limit)
+        )
+        
+        result = self.session.exec(statement).mappings().all()
+        return result
 
-def delete_department(*, session: Session, db_department: Department):
-    session.delete(db_department)
-    session.commit()
-    # No se retorna nada tras la eliminación
+    def update(self, *, db_department: Department, department_in: DepartmentUpdate) -> dict:
+        update_data = department_in.model_dump(exclude_unset=True)
+        if 'dane_code' in update_data:
+            del update_data['dane_code']
+        
+        for key, value in update_data.items():
+            setattr(db_department, key, value)
+        
+        db_department.updated_at = datetime.now()
+        self.session.add(db_department)
+        self.session.commit()
+        self.session.refresh(db_department)
+        
+        statement = (
+            select(func.count(Town.id))
+            .where(Town.department_id == db_department.id)
+        )
+        town_count = self.session.exec(statement).first()
+        
+        department_dict = db_department.model_dump()
+        department_dict["number_of_towns"] = town_count or 0
+        
+        return department_dict
+
+    def delete(self, *, db_department: Department):
+        statement = select(func.count(Town.id)).where(Town.department_id == db_department.id)
+        town_count = self.session.exec(statement).first()
+        
+        if town_count > 0:
+            raise ValueError(f"No se puede eliminar el departamento {db_department.name} porque tiene {town_count} municipios asociados")
+        
+        self.session.delete(db_department)
+        self.session.commit()
