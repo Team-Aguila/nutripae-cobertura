@@ -70,4 +70,4 @@ def get_etnic_groups(session: Session = Depends(get_session)):
 
 @router.get("/genders", response_model=List[Gender])
 def get_genders(session: Session = Depends(get_session)):
-    return session.exec(select(Gender)).all() 
+    return session.exec(select(Gender)).all()

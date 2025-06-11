@@ -28,7 +28,7 @@ def populate_data():
         for name in document_types:
             if not session.query(DocumentType).filter_by(name=name).first():
                 session.add(DocumentType(name=name))
-        
+
         # Gender
         genders = ["masculino", "femenino", "otro"]
         for name in genders:
@@ -46,7 +46,7 @@ def populate_data():
         for name in grades:
             if not session.query(Grade).filter_by(name=name).first():
                 session.add(Grade(name=name))
-        
+
         # EtnicGroup
         etnic_groups = [
             "afro", "indígena", "palenquero", "rom", "mestizo", "otro",
@@ -99,7 +99,7 @@ def populate_data():
                     town = Town(name=town_name, dane_code=f"{department.dane_code}{town_dane_code:03d}", department_id=department.id)
                     session.add(town)
                     town_dane_code += 1
-        
+
         session.commit()
         logger.info("Database populated with initial data.")
     except Exception as e:
@@ -109,4 +109,4 @@ def populate_data():
         session.close()
 
 if __name__ == "__main__":
-    populate_data() 
+    populate_data()

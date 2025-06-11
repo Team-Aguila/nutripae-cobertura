@@ -1,7 +1,7 @@
 """add parametric tables
 
 Revision ID: 2ce470eaee22
-Revises: 
+Revises:
 Create Date: 2025-06-10 23:17:44.811364
 
 """

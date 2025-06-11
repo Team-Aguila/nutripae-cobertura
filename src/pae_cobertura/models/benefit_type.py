@@ -11,4 +11,4 @@ class BenefitType(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str = Field(sa_column=Column(String(50), unique=True, index=True, nullable=False))
 
-    coverages: List["Coverage"] = Relationship(back_populates="benefit_type") 
+    coverages: List["Coverage"] = Relationship(back_populates="benefit_type")

@@ -11,4 +11,4 @@ class EtnicGroup(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str = Field(sa_column=Column(String(50), unique=True, index=True, nullable=False))
 
-    beneficiaries: List["Beneficiary"] = Relationship(back_populates="etnic_group") 
+    beneficiaries: List["Beneficiary"] = Relationship(back_populates="etnic_group")
