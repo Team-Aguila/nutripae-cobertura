@@ -1,22 +1,23 @@
+from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel
 from sqlmodel import SQLModel
 
 class TownBase(SQLModel):
-    code: str
     name: str
+    dane_code: str
     department_id: int
 
 class TownCreate(TownBase):
     pass
 
 class TownUpdate(SQLModel):
-    code: Optional[str] = None
     name: Optional[str] = None
     department_id: Optional[int] = None
 
-class TownRead(TownBase):
+class TownResponse(TownBase):
     id: int
+    created_at: datetime
+    updated_at: datetime
 
-class TownReadWithDetails(TownRead):
-    department_name: str
+class TownResponseWithDetails(TownResponse):
+    number_of_institutions: int

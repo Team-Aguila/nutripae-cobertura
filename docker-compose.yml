@@ -1,9 +1,9 @@
 version: '3.8'
 
 services:
-  pae-coberturad-db:
+  pae-cobertura-db:
     image: postgres:17-alpine
-    container_name: pae-coberturad-db
+    container_name: pae-cobertura-db
     restart: always
     environment:
       POSTGRES_USER: postgres

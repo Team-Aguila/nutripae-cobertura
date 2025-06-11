@@ -1,88 +1,72 @@
 from typing import List, Optional
-from sqlmodel import Session
+from sqlmodel import Session, select
+from pae_cobertura.repositories.town import TownRepository
+from pae_cobertura.schemas.towns import TownCreate, TownUpdate
 from pae_cobertura.models.town import Town
 from pae_cobertura.models.department import Department
-from pae_cobertura.schemas.towns import TownCreate, TownUpdate, TownRead, TownReadWithDetails
-from pae_cobertura.repositories.town import (
-    create_town,
-    get_town_by_id,
-    get_all_towns,
-    update_town,
-    delete_town
-)
 
-def validate_department(*, session: Session, department_id: int) -> bool:
-    department = session.get(Department, department_id)
-    return department is not None
+class TownService:
+    def __init__(self, session: Session):
+        self.session = session
+        self.repository = TownRepository(session)
 
-def create_town_service(*, session: Session, town_in: TownCreate) -> TownRead:
-    # Validar que el departamento exista si se está creando
-    if town_in.department_id is not None and not validate_department(session=session, department_id=town_in.department_id):
-        raise ValueError(f"Department with id {town_in.department_id} does not exist")
-    db_town = create_town(session=session, town_in=town_in)
-    return TownRead.model_validate(db_town)
+    def _validate_department(self, department_id: int):
+        department = self.session.get(Department, department_id)
+        if not department:
+            raise ValueError(f"Department with id {department_id} does not exist")
 
-def get_town_service(*, session: Session, town_id: int) -> Optional[TownReadWithDetails]:
-    db_town = get_town_by_id(session=session, town_id=town_id)
-    if not db_town:
-        return None
+    def create_town(self, town_in: TownCreate) -> dict:
+        existing_town_with_dane_code = self.session.exec(
+            select(Town).where(Town.dane_code == town_in.dane_code)
+        ).first()
+        existing_town_with_name = self.session.exec(
+            select(Town).where(Town.name == town_in.name)
+        ).first()
 
-    return TownReadWithDetails(
-        id=db_town.id,
-        code=db_town.code,
-        name=db_town.name,
-        department_id=db_town.department_id,
-        department_name=db_town.department.name
-    )
+        if existing_town_with_dane_code:
+            raise ValueError(f"A town with DANE code {town_in.dane_code} already exists.")
 
-def get_towns_service(*, session: Session, skip: int = 0, limit: int = 100) -> List[TownReadWithDetails]:
-    db_towns = get_all_towns(session=session, skip=skip, limit=limit)
-    return [
-        TownReadWithDetails(
-            id=town.id,
-            code=town.code,
-            name=town.name,
-            department_id=town.department_id,
-            department_name=town.department.name
+        if existing_town_with_name:
+            raise ValueError(f"A town with name {town_in.name} already exists.")
+
+        self._validate_department(town_in.department_id)
+
+        return self.repository.create(town_in=town_in)
+
+    def get_town(self, town_id: int) -> Optional[dict]:
+        return self.repository.get_by_id(town_id=town_id)
+
+    def get_towns(self, skip: int = 0, limit: int = 100) -> List[dict]:
+        return self.repository.get_all(skip=skip, limit=limit)
+
+    def update_town(self, town_id: int, town_in: TownUpdate) -> dict:
+        db_town = self.session.get(Town, town_id)
+        if not db_town:
+            raise ValueError(f"Town with id {town_id} not found")
+
+        if town_in.department_id is not None:
+            self._validate_department(town_in.department_id)
+
+        if town_in.name is not None:
+            existing_town_with_name = self.session.exec(
+                select(Town)
+                .where(Town.name == town_in.name)
+                .where(Town.id != town_id)
+            ).first()
+            if existing_town_with_name:
+                raise ValueError(f"A town with name {town_in.name} already exists.")
+
+        if hasattr(town_in, 'dane_code') and town_in.dane_code is not None:
+            raise ValueError("DANE code cannot be modified once created")
+
+        return self.repository.update(
+            db_town=db_town,
+            town_in=town_in
         )
-        for town in db_towns
-    ]
 
-def update_town_service(*, session: Session, town_id: int, town_in: TownUpdate) -> Optional[TownRead]:
-    db_town = get_town_by_id(session=session, town_id=town_id)
-    if not db_town:
-        return None
+    def delete_town(self, town_id: int):
+        db_town = self.session.get(Town, town_id)
+        if not db_town:
+            raise ValueError(f"Town with id {town_id} not found")
 
-    # Validar que el departamento exista si se está actualizando
-    if town_in.department_id is not None and not validate_department(session=session, department_id=town_in.department_id):
-        raise ValueError(f"Department with id {town_in.department_id} does not exist")
-
-    db_town = update_town(session=session, db_town=db_town, town_in=town_in)
-    return TownRead.model_validate(db_town)
-
-def patch_town_service(*, session: Session, town_id: int, town_in: TownUpdate) -> Optional[TownRead]:
-    db_town = get_town_by_id(session=session, town_id=town_id)
-    if not db_town:
-        return None
-
-    # Validar que el departamento exista si se está actualizando
-    if town_in.department_id is not None and not validate_department(session=session, department_id=town_in.department_id):
-        raise ValueError(f"Department with id {town_in.department_id} does not exist")
-
-    # Solo actualizamos los campos que vienen en town_in
-    town_data = town_in.model_dump(exclude_unset=True)
-    for key, value in town_data.items():
-        setattr(db_town, key, value)
-
-    session.add(db_town)
-    session.commit()
-    session.refresh(db_town)
-    return TownRead.model_validate(db_town)
-
-def delete_town_service(*, session: Session, town_id: int) -> bool:
-    db_town = get_town_by_id(session=session, town_id=town_id)
-    if not db_town:
-        return False
-
-    delete_town(session=session, db_town=db_town)
-    return True
+        self.repository.delete(db_town=db_town)

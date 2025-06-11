@@ -4,5 +4,7 @@ from sqlmodel import SQLModel
 from .department import Department
 from .town import Town
 from .institution import Institution
-from .site import Site
+from .campus import Campus
 from .beneficiary import Beneficiary
+from .coveragePerMonth import CoveragePerMonth
+from .coverage import Coverage
