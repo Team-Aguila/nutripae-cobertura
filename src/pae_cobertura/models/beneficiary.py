@@ -3,85 +3,55 @@ from datetime import datetime, date
 from sqlmodel import Field, Relationship, SQLModel, String
 import uuid
 from uuid import UUID
-from sqlalchemy import Boolean, Integer, Enum, Date
-from enum import Enum as PyEnum
+from sqlalchemy import Boolean, Integer, Date
 
 # Para evitar error de "circular import" con las relaciones
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .campus import Campus
     from .coverage import Coverage
-
-class DocumentType(str, PyEnum):
-    BIRTH_CERTIFICATE = "registro de nacimiento"
-    ID_CARD = "documento de identidad"
-    PASSPORT = "pasaporte"
-    FOREIGN_ID = "documento extranjero"
-
-class Gender(str, PyEnum):
-    MALE = "masculino"
-    FEMALE = "femenino"
-    OTHER = "otro"
-
-class Grade(str, PyEnum):
-    # Educación Inicial
-    INITIAL_0_1 = "inicial 0-1 años"
-    INITIAL_1_2 = "inicial 1-2 años"
-    INITIAL_2_3 = "inicial 2-3 años"
-
-    # Educación Preescolar
-    PRE_JARDIN = "pre-jardín"
-    JARDIN = "jardín"
-    TRANSICION = "transición"
-
-    # Educación Básica Primaria
-    PRIMERO = "primero"
-    SEGUNDO = "segundo"
-    TERCERO = "tercero"
-    CUARTO = "cuarto"
-    QUINTO = "quinto"
-
-    # Educación Básica Secundaria
-    SEXTO = "sexto"
-    SEPTIMO = "séptimo"
-    OCTAVO = "octavo"
-    NOVENO = "noveno"
-
-    # Educación Media
-    DECIMO = "décimo"
-    ONCE = "once"
-
-class EtnicGroup(str, PyEnum):
-    AFRICAN = "afro"
-    AMERICAN = "indígena"
-    ASIAN = "palenquero"
-    EUROPEAN = "rom"
-    MIXED = "mestizo"
-    OTHER = "otro"
-    INDIGENOUS = "indígena"
-
-class DisabilityType(str, PyEnum):
-    VISUAL = "visual"
-    AUDITIVO = "auditiva"
-    MOTORA = "motora"
-    INTELECTUAL = "intelectual"
-    MULTIPLE = "multiple"
+    from .document_type import DocumentType
+    from .gender import Gender
+    from .grade import Grade
+    from .etnic_group import EtnicGroup
+    from .disability_type import DisabilityType
 
 class Beneficiary(SQLModel, table=True):
     id: UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     year: int = Field(sa_type=Integer, index=True)
-    type_document: DocumentType = Field(sa_type=Enum(DocumentType), index=True, nullable=False)
-    number_document: str = Field(sa_type=String(20), index=True)
+
+    document_type_id: int = Field(foreign_key="document_type.id", nullable=False)
+    document_type: "DocumentType" = Relationship(back_populates="beneficiaries")
+
+    number_document: str = Field(sa_type=String(20),unique=True, index=True)
     first_name: str = Field(sa_type=String(50), index=True, nullable=False)
     second_name: str = Field(sa_type=String(50))
     first_surname: str = Field(sa_type=String(50), index=True, nullable=False)
     second_surname: str = Field(sa_type=String(50))
     birth_date: date = Field(sa_type=Date(), index=True)
-    gender: Gender = Field(sa_type=Enum(Gender), index=True, nullable=False)
-    grade: Grade = Field(sa_type=Enum(Grade), nullable=False)
-    etnic_group: Optional[EtnicGroup] = Field(sa_type=Enum(EtnicGroup), nullable=True)
+
+    gender_id: int = Field(foreign_key="gender.id", nullable=False)
+    gender: "Gender" = Relationship(back_populates="beneficiaries")
+
+    grade_id: int = Field(foreign_key="grade.id", nullable=False)
+    grade: "Grade" = Relationship(back_populates="beneficiaries")
+
+    etnic_group_id: Optional[int] = Field(foreign_key="etnic_group.id")
+    etnic_group: Optional["EtnicGroup"] = Relationship(back_populates="beneficiaries")
+
     victim_conflict: bool = Field(sa_type=Boolean, default=False)
-    disability_type: Optional[DisabilityType] = Field(sa_type=Enum(DisabilityType), nullable=True)
+
+    disability_type_id: Optional[int] = Field(foreign_key="disability_type.id")
+    disability_type: Optional["DisabilityType"] = Relationship(back_populates="beneficiaries")
+
+    attendant_number: int = Field(sa_type=Integer, default=1)
+    attendant_name: str = Field(sa_type=String(50))
+    attendant_phone: str = Field(sa_type=String(20))
+    attendant_relationship: str = Field(sa_type=String(50))
+
+    retirement_date: Optional[date] = Field(sa_type=Date())
+    retirement_reason: Optional[str] = Field(sa_type=String(255))
+
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
     deleted_at: Optional[datetime] = Field(default=None)
