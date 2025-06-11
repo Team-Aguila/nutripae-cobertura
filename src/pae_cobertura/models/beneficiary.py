@@ -28,25 +28,25 @@ class Grade(str, PyEnum):
     INITIAL_0_1 = "inicial 0-1 años"
     INITIAL_1_2 = "inicial 1-2 años"
     INITIAL_2_3 = "inicial 2-3 años"
-    
+
     # Educación Preescolar
     PRE_JARDIN = "pre-jardín"
     JARDIN = "jardín"
     TRANSICION = "transición"
-    
+
     # Educación Básica Primaria
     PRIMERO = "primero"
     SEGUNDO = "segundo"
     TERCERO = "tercero"
     CUARTO = "cuarto"
     QUINTO = "quinto"
-    
+
     # Educación Básica Secundaria
     SEXTO = "sexto"
     SEPTIMO = "séptimo"
     OCTAVO = "octavo"
     NOVENO = "noveno"
-    
+
     # Educación Media
     DECIMO = "décimo"
     ONCE = "once"

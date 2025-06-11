@@ -13,26 +13,26 @@ class TownRepository:
         self.session.add(db_town)
         self.session.commit()
         self.session.refresh(db_town)
-        
+
         town_dict = db_town.model_dump()
         town_dict["number_of_institutions"] = 0
-        
+
         return town_dict
 
     def get_by_id(self, *, town_id: int) -> dict | None:
         town = self.session.get(Town, town_id)
         if not town:
             return None
-            
+
         statement = (
             select(func.count(Institution.id))
             .where(Institution.town_id == town_id)
         )
         institution_count = self.session.exec(statement).first()
-        
+
         town_dict = town.model_dump()
         town_dict["number_of_institutions"] = institution_count or 0
-        
+
         return town_dict
 
     def get_all(self, *, skip: int = 0, limit: int = 100) -> list[dict]:
@@ -44,7 +44,7 @@ class TownRepository:
             .group_by(Institution.town_id)
             .subquery()
         )
-        
+
         statement = (
             select(
                 Town.id,
@@ -60,7 +60,7 @@ class TownRepository:
             .offset(skip)
             .limit(limit)
         )
-        
+
         result = self.session.exec(statement).mappings().all()
         return result
 
@@ -68,32 +68,32 @@ class TownRepository:
         update_data = town_in.model_dump(exclude_unset=True)
         if 'dane_code' in update_data:
             del update_data['dane_code']
-            
+
         for key, value in update_data.items():
             setattr(db_town, key, value)
-            
+
         db_town.updated_at = datetime.now()
         self.session.add(db_town)
         self.session.commit()
         self.session.refresh(db_town)
-        
+
         statement = (
             select(func.count(Institution.id))
             .where(Institution.town_id == db_town.id)
         )
         institution_count = self.session.exec(statement).first()
-        
+
         town_dict = db_town.model_dump()
         town_dict["number_of_institutions"] = institution_count or 0
-        
+
         return town_dict
 
     def delete(self, *, db_town: Town):
         statement = select(func.count(Institution.id)).where(Institution.town_id == db_town.id)
         institution_count = self.session.exec(statement).first()
-        
+
         if institution_count > 0:
             raise ValueError(f"No se puede eliminar el municipio {db_town.name} porque tiene {institution_count} instituciones asociadas")
-            
+
         self.session.delete(db_town)
         self.session.commit()

@@ -13,26 +13,26 @@ class DepartmentRepository:
         self.session.add(db_department)
         self.session.commit()
         self.session.refresh(db_department)
-        
+
         department_dict = db_department.model_dump()
         department_dict["number_of_towns"] = 0
-        
+
         return department_dict
 
     def get_by_id(self, *, department_id: int) -> dict | None:
         department = self.session.get(Department, department_id)
         if not department:
             return None
-            
+
         statement = (
             select(func.count(Town.id))
             .where(Town.department_id == department_id)
         )
         town_count = self.session.exec(statement).first()
-        
+
         department_dict = department.model_dump()
         department_dict["number_of_towns"] = town_count or 0
-        
+
         return department_dict
 
     def get_all(self, *, skip: int = 0, limit: int = 100) -> list[dict]:
@@ -44,7 +44,7 @@ class DepartmentRepository:
             .group_by(Town.department_id)
             .subquery()
         )
-        
+
         statement = (
             select(
                 Department.id,
@@ -59,7 +59,7 @@ class DepartmentRepository:
             .offset(skip)
             .limit(limit)
         )
-        
+
         result = self.session.exec(statement).mappings().all()
         return result
 
@@ -67,32 +67,32 @@ class DepartmentRepository:
         update_data = department_in.model_dump(exclude_unset=True)
         if 'dane_code' in update_data:
             del update_data['dane_code']
-        
+
         for key, value in update_data.items():
             setattr(db_department, key, value)
-        
+
         db_department.updated_at = datetime.now()
         self.session.add(db_department)
         self.session.commit()
         self.session.refresh(db_department)
-        
+
         statement = (
             select(func.count(Town.id))
             .where(Town.department_id == db_department.id)
         )
         town_count = self.session.exec(statement).first()
-        
+
         department_dict = db_department.model_dump()
         department_dict["number_of_towns"] = town_count or 0
-        
+
         return department_dict
 
     def delete(self, *, db_department: Department):
         statement = select(func.count(Town.id)).where(Town.department_id == db_department.id)
         town_count = self.session.exec(statement).first()
-        
+
         if town_count > 0:
             raise ValueError(f"No se puede eliminar el departamento {db_department.name} porque tiene {town_count} municipios asociados")
-        
+
         self.session.delete(db_department)
         self.session.commit()

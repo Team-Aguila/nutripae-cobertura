@@ -1,7 +1,7 @@
 """add missing tables
 
 Revision ID: f5fee6be19a9
-Revises: 
+Revises:
 Create Date: 2025-06-10 20:38:01.724354
 
 """

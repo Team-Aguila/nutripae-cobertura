@@ -13,26 +13,26 @@ class CampusRepository:
         self.session.add(db_campus)
         self.session.commit()
         self.session.refresh(db_campus)
-        
+
         campus_dict = db_campus.model_dump()
         campus_dict["number_of_coverage_per_months"] = 0
-        
+
         return campus_dict
 
     def get_by_id(self, *, campus_id: int) -> dict | None:
         campus = self.session.get(Campus, campus_id)
         if not campus:
             return None
-            
+
         statement = (
             select(func.count(CoveragePerMonth.id))
             .where(CoveragePerMonth.campus_id == campus_id)
         )
         coverage_count = self.session.exec(statement).first()
-        
+
         campus_dict = campus.model_dump()
         campus_dict["number_of_coverage_per_months"] = coverage_count or 0
-        
+
         return campus_dict
 
     def get_all(self, *, skip: int = 0, limit: int = 100) -> list[dict]:
@@ -44,7 +44,7 @@ class CampusRepository:
             .group_by(CoveragePerMonth.campus_id)
             .subquery()
         )
-        
+
         statement = (
             select(
                 Campus.id,
@@ -63,7 +63,7 @@ class CampusRepository:
             .offset(skip)
             .limit(limit)
         )
-        
+
         result = self.session.exec(statement).mappings().all()
         return result
 
@@ -71,32 +71,32 @@ class CampusRepository:
         update_data = campus_in.model_dump(exclude_unset=True)
         if 'dane_code' in update_data:
             del update_data['dane_code']
-            
+
         for key, value in update_data.items():
             setattr(db_campus, key, value)
-            
+
         db_campus.updated_at = datetime.now()
         self.session.add(db_campus)
         self.session.commit()
         self.session.refresh(db_campus)
-        
+
         statement = (
             select(func.count(CoveragePerMonth.id))
             .where(CoveragePerMonth.campus_id == db_campus.id)
         )
         coverage_count = self.session.exec(statement).first()
-        
+
         campus_dict = db_campus.model_dump()
         campus_dict["number_of_coverage_per_months"] = coverage_count or 0
-        
+
         return campus_dict
 
     def delete(self, *, db_campus: Campus):
         statement = select(func.count(CoveragePerMonth.id)).where(CoveragePerMonth.campus_id == db_campus.id)
         coverage_count = self.session.exec(statement).first()
-        
+
         if coverage_count > 0:
             raise ValueError(f"No se puede eliminar el campus {db_campus.name} porque tiene {coverage_count} coberturas asociadas")
-            
+
         self.session.delete(db_campus)
-        self.session.commit() 
+        self.session.commit()

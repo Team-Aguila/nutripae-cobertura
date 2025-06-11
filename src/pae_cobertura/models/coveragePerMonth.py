@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 class CoveragePerMonth(SQLModel, table=True):
     __tablename__ = "coveragePerMonth"
-    
+
     id: UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     date_start: date = Field(sa_type=Date(), index=True)
     date_end: date = Field(sa_type=Date(), index=True)
@@ -22,5 +22,5 @@ class CoveragePerMonth(SQLModel, table=True):
 
     campus_id: int = Field(foreign_key="campus.id")
     campus: "Campus" = Relationship(back_populates="coverage_per_month")
-    
+
     coverage: List["Coverage"] = Relationship(back_populates="coverage_per_month")

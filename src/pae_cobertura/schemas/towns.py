@@ -20,4 +20,4 @@ class TownResponse(TownBase):
     updated_at: datetime
 
 class TownResponseWithDetails(TownResponse):
-    number_of_institutions: int 
+    number_of_institutions: int

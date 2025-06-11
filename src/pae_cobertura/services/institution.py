@@ -9,7 +9,7 @@ class InstitutionService:
     def __init__(self, session: Session):
         self.session = session
         self.repository = InstitutionRepository(session)
-    
+
     def _validate_town(self, town_id: int):
         town = self.session.get(Town, town_id)
         if not town:
@@ -22,15 +22,15 @@ class InstitutionService:
         existing_institution_with_name = self.session.exec(
             select(Institution).where(Institution.name == institution_in.name)
         ).first()
-        
+
         if existing_institution_with_dane_code:
             raise ValueError(f"An institution with DANE code {institution_in.dane_code} already exists.")
-        
+
         if existing_institution_with_name:
             raise ValueError(f"An institution with name {institution_in.name} already exists.")
-            
+
         self._validate_town(institution_in.town_id)
-        
+
         return self.repository.create(institution_in=institution_in)
 
     def get_institution(self, institution_id: int) -> Optional[dict]:
@@ -43,10 +43,10 @@ class InstitutionService:
         db_institution = self.session.get(Institution, institution_id)
         if not db_institution:
             raise ValueError(f"Institution with id {institution_id} not found")
-        
+
         if institution_in.town_id is not None:
             self._validate_town(institution_in.town_id)
-        
+
         if institution_in.name is not None:
             existing_institution_with_name = self.session.exec(
                 select(Institution)
@@ -55,10 +55,10 @@ class InstitutionService:
             ).first()
             if existing_institution_with_name:
                 raise ValueError(f"An institution with name {institution_in.name} already exists.")
-        
+
         if hasattr(institution_in, 'dane_code') and institution_in.dane_code is not None:
             raise ValueError("DANE code cannot be modified once created")
-        
+
         return self.repository.update(
             db_institution=db_institution,
             institution_in=institution_in
@@ -68,5 +68,5 @@ class InstitutionService:
         db_institution = self.session.get(Institution, institution_id)
         if not db_institution:
             raise ValueError(f"Institution with id {institution_id} not found")
-        
+
         self.repository.delete(db_institution=db_institution)

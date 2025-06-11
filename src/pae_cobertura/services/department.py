@@ -16,10 +16,10 @@ class DepartmentService:
         existing_department_with_name = self.session.exec(
             select(Department).where(Department.name == department_in.name)
         ).first()
-        
+
         if existing_department_with_dane_code:
             raise ValueError(f"A department with DANE code {department_in.dane_code} already exists.")
-        
+
         if existing_department_with_name:
             raise ValueError(f"A department with name {department_in.name} already exists.")
 
@@ -35,7 +35,7 @@ class DepartmentService:
         db_department = self.session.get(Department, department_id)
         if not db_department:
             raise ValueError(f"Department with id {department_id} not found")
-        
+
         if department_in.name is not None:
             existing_department_with_name = self.session.exec(
                 select(Department)
@@ -44,10 +44,10 @@ class DepartmentService:
             ).first()
             if existing_department_with_name:
                 raise ValueError(f"A department with name {department_in.name} already exists.")
-        
+
         if hasattr(department_in, 'dane_code') and department_in.dane_code is not None:
             raise ValueError("DANE code cannot be modified once created")
-        
+
         return self.repository.update(
             db_department=db_department,
             department_in=department_in
@@ -57,5 +57,5 @@ class DepartmentService:
         db_department = self.session.get(Department, department_id)
         if not db_department:
             raise ValueError(f"Department with id {department_id} not found")
-        
-        self.repository.delete(db_department=db_department) 
+
+        self.repository.delete(db_department=db_department)

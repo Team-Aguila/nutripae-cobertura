@@ -68,4 +68,4 @@ class CampusService:
         if not db_campus:
             raise ValueError(f"Campus with id {campus_id} not found")
 
-        self.repository.delete(db_campus=db_campus) 
+        self.repository.delete(db_campus=db_campus)

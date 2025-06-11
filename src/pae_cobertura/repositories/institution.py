@@ -13,26 +13,26 @@ class InstitutionRepository:
         self.session.add(db_institution)
         self.session.commit()
         self.session.refresh(db_institution)
-        
+
         institution_dict = db_institution.model_dump()
         institution_dict["number_of_campuses"] = 0
-        
+
         return institution_dict
 
     def get_by_id(self, *, institution_id: int) -> dict | None:
         institution = self.session.get(Institution, institution_id)
         if not institution:
             return None
-            
+
         statement = (
             select(func.count(Campus.id))
             .where(Campus.institution_id == institution_id)
         )
         campus_count = self.session.exec(statement).first()
-        
+
         institution_dict = institution.model_dump()
         institution_dict["number_of_campuses"] = campus_count or 0
-        
+
         return institution_dict
 
     def get_all(self, *, skip: int = 0, limit: int = 100) -> list[dict]:
@@ -44,7 +44,7 @@ class InstitutionRepository:
             .group_by(Campus.institution_id)
             .subquery()
         )
-        
+
         statement = (
             select(
                 Institution.id,
@@ -60,7 +60,7 @@ class InstitutionRepository:
             .offset(skip)
             .limit(limit)
         )
-        
+
         result = self.session.exec(statement).mappings().all()
         return result
 
@@ -68,7 +68,7 @@ class InstitutionRepository:
         update_data = institution_in.model_dump(exclude_unset=True)
         if 'dane_code' in update_data:
             del update_data['dane_code']
-            
+
         for key, value in update_data.items():
             setattr(db_institution, key, value)
 
@@ -76,24 +76,24 @@ class InstitutionRepository:
         self.session.add(db_institution)
         self.session.commit()
         self.session.refresh(db_institution)
-        
+
         statement = (
             select(func.count(Campus.id))
             .where(Campus.institution_id == db_institution.id)
         )
         campus_count = self.session.exec(statement).first()
-        
+
         institution_dict = db_institution.model_dump()
         institution_dict["number_of_campuses"] = campus_count or 0
-        
+
         return institution_dict
 
     def delete(self, *, db_institution: Institution):
         statement = select(func.count(Campus.id)).where(Campus.institution_id == db_institution.id)
         campus_count = self.session.exec(statement).first()
-        
+
         if campus_count > 0:
             raise ValueError(f"No se puede eliminar la institucion {db_institution.name} porque tiene {campus_count} sedes asociadas")
-            
+
         self.session.delete(db_institution)
         self.session.commit()

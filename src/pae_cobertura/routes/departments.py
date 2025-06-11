@@ -72,4 +72,4 @@ def delete_department(
         service.delete_department(department_id)
         return {"message": "Department deleted successfully"}
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e)) 
+        raise HTTPException(status_code=400, detail=str(e))
