@@ -7,7 +7,7 @@ from sqlmodel import Field, Relationship, SQLModel, String
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .institution import Institution
-    from .coveragePerMonth import CoveragePerMonth
+    from .coverage import Coverage
 
 class Campus(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -23,4 +23,4 @@ class Campus(SQLModel, table=True):
     institution_id: int = Field(foreign_key="institution.id")
     institution: "Institution" = Relationship(back_populates="campuses")
 
-    coverage_per_month: List["CoveragePerMonth"] = Relationship(back_populates="campus")
+    coverage: List["Coverage"] = Relationship(back_populates="campus")

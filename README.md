@@ -33,3 +33,9 @@ To create and run migrations please run
 poetry run alembic revision --autogenerate -m "your migration comment goes here"
 poetry run alembic upgrade head
 ```
+
+To run the project please run:
+
+```bash
+poetry run poe dev
+```

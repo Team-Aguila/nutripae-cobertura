@@ -5,6 +5,7 @@ from pae_cobertura.routes.departments import router as departments_router
 from pae_cobertura.routes.towns import router as towns_router
 from pae_cobertura.routes.institutions import router as institutions_router
 from pae_cobertura.routes.campus import router as campuses_router
+from pae_cobertura.routers.parametrics import router as parametrics_router
 
 app = FastAPI(
     title="API de Cobertura del PAE",
@@ -26,6 +27,7 @@ app.include_router(departments_router, prefix="/api/v1/departments", tags=["Depa
 app.include_router(towns_router, prefix="/api/v1/towns", tags=["Towns"])
 app.include_router(institutions_router, prefix="/api/v1/institutions", tags=["Institutions"])
 app.include_router(campuses_router, prefix="/api/v1/campuses", tags=["Campuses"])
+app.include_router(parametrics_router, prefix="/api/v1/parametrics", tags=["Parametrics"])
 
 @app.get("/")
 def read_root():
