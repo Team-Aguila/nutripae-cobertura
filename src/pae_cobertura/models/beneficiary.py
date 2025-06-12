@@ -25,9 +25,9 @@ class Beneficiary(SQLModel, table=True):
 
     number_document: str = Field(sa_type=String(20),unique=True, index=True)
     first_name: str = Field(sa_type=String(50), index=True, nullable=False)
-    second_name: str = Field(sa_type=String(50))
+    second_name: Optional[str] = Field(sa_type=String(50), default=None)
     first_surname: str = Field(sa_type=String(50), index=True, nullable=False)
-    second_surname: str = Field(sa_type=String(50))
+    second_surname: Optional[str] = Field(sa_type=String(50), default=None)
     birth_date: date = Field(sa_type=Date(), index=True)
 
     gender_id: int = Field(foreign_key="gender.id", nullable=False)
@@ -39,18 +39,18 @@ class Beneficiary(SQLModel, table=True):
     etnic_group_id: Optional[int] = Field(foreign_key="etnic_group.id")
     etnic_group: Optional["EtnicGroup"] = Relationship(back_populates="beneficiaries")
 
-    victim_conflict: bool = Field(sa_type=Boolean, default=False)
+    victim_conflict: Optional[bool] = Field(sa_type=Boolean, default=False)
 
     disability_type_id: Optional[int] = Field(foreign_key="disability_type.id")
     disability_type: Optional["DisabilityType"] = Relationship(back_populates="beneficiaries")
 
-    attendant_number: int = Field(sa_type=Integer, default=1)
-    attendant_name: str = Field(sa_type=String(50))
-    attendant_phone: str = Field(sa_type=String(20))
-    attendant_relationship: str = Field(sa_type=String(50))
+    attendant_number: Optional[int] = Field(sa_type=Integer, default=1)
+    attendant_name: Optional[str] = Field(sa_type=String(50), default=None)
+    attendant_phone: Optional[str] = Field(sa_type=String(20), default=None)
+    attendant_relationship: Optional[str] = Field(sa_type=String(50), default=None)
 
     retirement_date: Optional[date] = Field(sa_type=Date())
-    retirement_reason: Optional[str] = Field(sa_type=String(255))
+    retirement_reason: Optional[str] = Field(sa_type=String(255), default=None)
 
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
