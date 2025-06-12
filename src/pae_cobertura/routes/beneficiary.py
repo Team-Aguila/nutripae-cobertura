@@ -81,4 +81,4 @@ def delete_beneficiary(
         service.delete_beneficiary(beneficiary_id)
         return {"message": "Beneficiary deleted successfully"}
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e)) 
+        raise HTTPException(status_code=400, detail=str(e))

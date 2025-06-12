@@ -79,4 +79,4 @@ def delete_coverage(
         service.delete_coverage(coverage_id)
         return {"message": "Coverage deleted successfully"}
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e)) 
+        raise HTTPException(status_code=400, detail=str(e))

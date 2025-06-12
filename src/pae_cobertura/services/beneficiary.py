@@ -57,10 +57,10 @@ class BeneficiaryService:
         # Soft delete could be implemented here by setting deleted_at
         # but for now we do a hard delete as per repository.
         # If soft delete is needed, repository should be changed.
-        
+
         # Before deleting, check for related coverages
         if db_beneficiary.coverage:
             raise ValueError("Cannot delete beneficiary with associated coverages.")
 
         self.repository.delete(db_beneficiary=db_beneficiary)
-        return True 
+        return True

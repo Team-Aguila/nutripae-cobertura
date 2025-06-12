@@ -69,4 +69,4 @@ class CoverageService:
             raise ValueError(f"Coverage with id {coverage_id} not found")
 
         self.repository.delete(db_coverage=db_coverage)
-        return True 
+        return True

@@ -59,4 +59,4 @@ class CoverageRepository:
     def delete(self, *, db_coverage: Coverage):
         self.session.delete(db_coverage)
         self.session.commit()
-        return True 
+        return True

@@ -64,4 +64,4 @@ class BeneficiaryRepository:
     def delete(self, *, db_beneficiary: Beneficiary):
         self.session.delete(db_beneficiary)
         self.session.commit()
-        return True 
+        return True
