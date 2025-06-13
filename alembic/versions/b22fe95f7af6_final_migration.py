@@ -1,7 +1,7 @@
 """final migration
 
 Revision ID: b22fe95f7af6
-Revises: 
+Revises:
 Create Date: 2025-06-12 12:15:12.797718
 
 """
