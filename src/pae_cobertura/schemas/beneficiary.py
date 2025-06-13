@@ -12,7 +12,6 @@ from pae_cobertura.models.coverage import Coverage
 
 
 class BeneficiaryBase(SQLModel):
-    year: int
     document_type_id: int
     number_document: str
     first_name: str
@@ -38,7 +37,6 @@ class BeneficiaryCreate(BeneficiaryBase):
 
 
 class BeneficiaryUpdate(SQLModel):
-    year: Optional[int] = None
     document_type_id: Optional[int] = None
     number_document: Optional[str] = None
     first_name: Optional[str] = None

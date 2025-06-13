@@ -100,3 +100,25 @@ class CampusRepository:
 
         self.session.delete(db_campus)
         self.session.commit()
+
+    def get_by_institution(self, *, institution_id: int, skip: int = 0, limit: int = 100) -> list[dict]:
+        campuses = self.session.exec(
+            select(Campus)
+            .where(Campus.institution_id == institution_id)
+            .order_by(Campus.name)
+            .offset(skip)
+            .limit(limit)
+        ).all()
+
+        campus_dicts = []
+        for campus in campuses:
+            statement = (
+                select(func.count(Coverage.id))
+                .where(Coverage.campus_id == campus.id)
+            )
+            coverage_count = self.session.exec(statement).first()
+            campus_dict = campus.model_dump()
+            campus_dict["number_of_coverages"] = coverage_count or 0
+            campus_dicts.append(campus_dict)
+
+        return campus_dicts

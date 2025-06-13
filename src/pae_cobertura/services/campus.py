@@ -1,14 +1,17 @@
 from typing import List, Optional
 from sqlmodel import Session, select
 from pae_cobertura.repositories.campus import CampusRepository
+from pae_cobertura.repositories.coverage import CoverageRepository
 from pae_cobertura.schemas.campus import CampusCreate, CampusUpdate
 from pae_cobertura.models.campus import Campus
 from pae_cobertura.models.institution import Institution
+from pae_cobertura.models.coverage import Coverage
 
 class CampusService:
     def __init__(self, session: Session):
         self.session = session
         self.repository = CampusRepository(session)
+        self.coverage_repository = CoverageRepository(session)
 
     def _validate_institution(self, institution_id: int):
         institution = self.session.get(Institution, institution_id)
@@ -69,3 +72,10 @@ class CampusService:
             raise ValueError(f"Campus with id {campus_id} not found")
 
         self.repository.delete(db_campus=db_campus)
+
+    def get_coverage_by_campus(self, *, campus_id: int, skip: int = 0, limit: int = 100) -> List[Coverage]:
+        db_campus = self.session.get(Campus, campus_id)
+        if not db_campus:
+            raise ValueError(f"Campus with id {campus_id} not found")
+
+        return self.coverage_repository.get_by_campus(campus_id=campus_id, skip=skip, limit=limit)

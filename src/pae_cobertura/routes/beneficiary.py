@@ -39,7 +39,7 @@ def get_beneficiary(
 @router.get("/", response_model=List[BeneficiaryRead])
 def get_beneficiaries(
     skip: int = Query(0, ge=0),
-    limit: int = Query(100, ge=1, le=100),
+    limit: int = Query(10000, ge=1, le=10000),
     session: Session = Depends(get_session),
 ):
     service = BeneficiaryService(session)

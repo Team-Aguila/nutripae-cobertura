@@ -60,3 +60,17 @@ class CoverageRepository:
         self.session.delete(db_coverage)
         self.session.commit()
         return True
+
+    def get_by_campus(self, *, campus_id: int, skip: int = 0, limit: int = 100) -> list[Coverage]:
+        statement = (
+            select(Coverage)
+            .where(Coverage.campus_id == campus_id)
+            .offset(skip)
+            .limit(limit)
+            .options(
+                selectinload(Coverage.benefit_type),
+                selectinload(Coverage.campus),
+                selectinload(Coverage.beneficiary)
+            )
+        )
+        return self.session.exec(statement).all()

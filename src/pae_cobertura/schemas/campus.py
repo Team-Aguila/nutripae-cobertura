@@ -26,4 +26,4 @@ class CampusResponse(CampusBase):
     updated_at: datetime
 
 class CampusResponseWithDetails(CampusResponse):
-    number_of_coverage_per_months: int
+    number_of_coverages: int

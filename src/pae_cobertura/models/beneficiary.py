@@ -18,7 +18,6 @@ if TYPE_CHECKING:
 
 class Beneficiary(SQLModel, table=True):
     id: UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    year: int = Field(sa_type=Integer, index=True)
 
     document_type_id: int = Field(foreign_key="document_type.id", nullable=False)
     document_type: "DocumentType" = Relationship(back_populates="beneficiaries")

@@ -1,6 +1,7 @@
 from typing import List, Optional
 from sqlmodel import Session, select
 from pae_cobertura.repositories.department import DepartmentRepository
+from pae_cobertura.repositories.town import TownRepository
 from pae_cobertura.schemas.departments import DepartmentCreate, DepartmentUpdate
 from pae_cobertura.models.department import Department
 
@@ -8,6 +9,7 @@ class DepartmentService:
     def __init__(self, session: Session):
         self.session = session
         self.repository = DepartmentRepository(session)
+        self.town_repository = TownRepository(session)
 
     def create_department(self, department_in: DepartmentCreate) -> Department:
         existing_department_with_dane_code = self.session.exec(
@@ -59,3 +61,10 @@ class DepartmentService:
             raise ValueError(f"Department with id {department_id} not found")
 
         self.repository.delete(db_department=db_department)
+
+    def get_towns_by_department(self, *, department_id: int, skip: int = 0, limit: int = 100) -> List[dict]:
+        db_department = self.session.get(Department, department_id)
+        if not db_department:
+            raise ValueError(f"Department with id {department_id} not found")
+
+        return self.town_repository.get_by_department(department_id=department_id, skip=skip, limit=limit)
