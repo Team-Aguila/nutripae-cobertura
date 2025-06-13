@@ -97,3 +97,25 @@ class TownRepository:
 
         self.session.delete(db_town)
         self.session.commit()
+
+    def get_by_department(self, *, department_id: int, skip: int = 0, limit: int = 100) -> list[dict]:
+        towns = self.session.exec(
+            select(Town)
+            .where(Town.department_id == department_id)
+            .order_by(Town.name)
+            .offset(skip)
+            .limit(limit)
+        ).all()
+
+        town_dicts = []
+        for town in towns:
+            statement = (
+                select(func.count(Institution.id))
+                .where(Institution.town_id == town.id)
+            )
+            institution_count = self.session.exec(statement).first()
+            town_dict = town.model_dump()
+            town_dict["number_of_institutions"] = institution_count or 0
+            town_dicts.append(town_dict)
+
+        return town_dicts

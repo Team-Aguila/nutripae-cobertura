@@ -23,6 +23,7 @@ packages = [{include = "pae_cobertura", from = "src"}]
 commitizen = "^4.8.2"
 pre-commit = "^4.2.0"
 poethepoet = "^0.34.0"
+faker = "^26.0.0"
 
 
 [tool.commitizen]

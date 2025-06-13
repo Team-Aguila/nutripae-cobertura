@@ -1,6 +1,7 @@
 from typing import List, Optional
 from sqlmodel import Session, select
 from pae_cobertura.repositories.town import TownRepository
+from pae_cobertura.repositories.institution import InstitutionRepository
 from pae_cobertura.schemas.towns import TownCreate, TownUpdate
 from pae_cobertura.models.town import Town
 from pae_cobertura.models.department import Department
@@ -9,6 +10,7 @@ class TownService:
     def __init__(self, session: Session):
         self.session = session
         self.repository = TownRepository(session)
+        self.institution_repository = InstitutionRepository(session)
 
     def _validate_department(self, department_id: int):
         department = self.session.get(Department, department_id)
@@ -70,3 +72,10 @@ class TownService:
             raise ValueError(f"Town with id {town_id} not found")
 
         self.repository.delete(db_town=db_town)
+
+    def get_institutions_by_town(self, *, town_id: int, skip: int = 0, limit: int = 100) -> List[dict]:
+        db_town = self.session.get(Town, town_id)
+        if not db_town:
+            raise ValueError(f"Town with id {town_id} not found")
+
+        return self.institution_repository.get_by_town(town_id=town_id, skip=skip, limit=limit)

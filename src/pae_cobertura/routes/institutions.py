@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session
 from pae_cobertura.database import get_session
 from pae_cobertura.schemas.institutions import InstitutionCreate, InstitutionUpdate, InstitutionResponseWithDetails
+from pae_cobertura.schemas.campus import CampusResponseWithDetails as CampusResponse
 from pae_cobertura.services.institution import InstitutionService
 
 router = APIRouter()
@@ -37,6 +38,19 @@ def get_institutions(
 ):
     service = InstitutionService(session)
     return service.get_institutions(skip=skip, limit=limit)
+
+@router.get("/{institution_id}/campus", response_model=List[CampusResponse])
+def get_institution_campus(
+    institution_id: int,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(100, ge=1, le=100),
+    session: Session = Depends(get_session)
+):
+    service = InstitutionService(session)
+    try:
+        return service.get_campus_by_institution(institution_id=institution_id, skip=skip, limit=limit)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 @router.put("/{institution_id}", response_model=InstitutionResponseWithDetails)
 def update_institution(

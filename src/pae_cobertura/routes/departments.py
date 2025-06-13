@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session
 from pae_cobertura.database import get_session
 from pae_cobertura.schemas.departments import DepartmentCreate, DepartmentUpdate, DepartmentResponseWithDetails
+from pae_cobertura.schemas.towns import TownResponseWithDetails as TownResponse
 from pae_cobertura.services.department import DepartmentService
 
 router = APIRouter()
@@ -37,6 +38,19 @@ def get_departments(
 ):
     service = DepartmentService(session)
     return service.get_departments(skip=skip, limit=limit)
+
+@router.get("/{department_id}/towns", response_model=List[TownResponse])
+def get_department_towns(
+    department_id: int,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(100, ge=1, le=100),
+    session: Session = Depends(get_session)
+):
+    service = DepartmentService(session)
+    try:
+        return service.get_towns_by_department(department_id=department_id, skip=skip, limit=limit)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 @router.put("/{department_id}", response_model=DepartmentResponseWithDetails)
 def update_department(

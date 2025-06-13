@@ -1,6 +1,7 @@
 from typing import List, Optional
 from sqlmodel import Session, select
 from pae_cobertura.repositories.institution import InstitutionRepository
+from pae_cobertura.repositories.campus import CampusRepository
 from pae_cobertura.schemas.institutions import InstitutionCreate, InstitutionUpdate
 from pae_cobertura.models.institution import Institution
 from pae_cobertura.models.town import Town
@@ -9,6 +10,7 @@ class InstitutionService:
     def __init__(self, session: Session):
         self.session = session
         self.repository = InstitutionRepository(session)
+        self.campus_repository = CampusRepository(session)
 
     def _validate_town(self, town_id: int):
         town = self.session.get(Town, town_id)
@@ -70,3 +72,10 @@ class InstitutionService:
             raise ValueError(f"Institution with id {institution_id} not found")
 
         self.repository.delete(db_institution=db_institution)
+
+    def get_campus_by_institution(self, *, institution_id: int, skip: int = 0, limit: int = 100) -> List[dict]:
+        db_institution = self.session.get(Institution, institution_id)
+        if not db_institution:
+            raise ValueError(f"Institution with id {institution_id} not found")
+
+        return self.campus_repository.get_by_institution(institution_id=institution_id, skip=skip, limit=limit)
