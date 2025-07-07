@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     def assemble_db_connection(cls, v: str | None, values) -> any:
         if isinstance(v, str):
             return v
-        
+
         data = values.data
         return f"postgresql+psycopg2://{data.get('POSTGRES_USER')}:{data.get('POSTGRES_PASSWORD')}@{data.get('DB_HOST')}:{data.get('DB_HOST_PORT')}/{data.get('POSTGRES_DB')}"
 
