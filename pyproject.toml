@@ -50,8 +50,7 @@ requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poe.tasks]
-dev = "uvicorn pae_cobertura.main:app --reload --app-dir src"
 db-generate = "alembic revision --autogenerate"
 db-migrate = "alembic upgrade head"
-db-seed = { shell = "cd src && python -m pae_cobertura.seed" }
+db-seed = { shell = "python -m src.seed" }
 lint = "pre-commit run --all-files"

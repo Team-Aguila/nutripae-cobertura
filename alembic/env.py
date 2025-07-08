@@ -8,8 +8,8 @@ from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-from pae_cobertura.core.config import settings
-from pae_cobertura.models import SQLModel
+from core.config import settings
+from models import SQLModel
 from alembic import context
 
 # this is the Alembic Config object, which provides

@@ -26,18 +26,20 @@ class Settings(BaseSettings):
 
     API_PREFIX_STR: str = "/api/v1"
     MODULE_IDENTIFIER: str = "nutripae-cobertura"
- 
+
     NUTRIPAE_AUTH_HOST: str
     NUTRIPAE_AUTH_PORT: int
     NUTRIPAE_AUTH_PREFIX_STR: str = "/api/v1"
     NUTRIPAE_AUTH_URL: str | None = None
-     
+
     def assemble_nutripae_auth_url(cls, v: str | None, values) -> any:
         if isinstance(v, str):
             return v
-        
+
         data = values.data
         return f"http://{data.get('NUTRIPAE_AUTH_HOST')}:{data.get('NUTRIPAE_AUTH_PORT')}{data.get('NUTRIPAE_AUTH_PREFIX_STR')}"
+
+    OTLP_GRPC_ENDPOINT: str
 
     model_config = SettingsConfigDict(
         env_file=f".env",

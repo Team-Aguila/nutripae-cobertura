@@ -23,7 +23,7 @@ def custom_openapi():
         description="Backend para la gestión del personal y su disponibilidad.",
         routes=app.routes,
     )
-    
+
     # Define the security scheme for JWT Bearer tokens
     openapi_schema["components"]["securitySchemes"] = {
         "HTTPBearer": {
@@ -33,7 +33,7 @@ def custom_openapi():
             "description": "Enter your JWT token obtained from the NutriPAE-AUTH service /auth/login endpoint"
         }
     }
-    
+
     app.openapi_schema = openapi_schema
     return app.openapi_schema
 
