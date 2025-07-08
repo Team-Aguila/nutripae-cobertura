@@ -1,8 +1,8 @@
 from datetime import datetime
 from sqlmodel import Session, select, func
-from pae_cobertura.models.department import Department
-from pae_cobertura.models.town import Town
-from pae_cobertura.schemas.departments import DepartmentCreate, DepartmentUpdate
+from models.department import Department
+from models.town import Town
+from schemas.departments import DepartmentCreate, DepartmentUpdate
 
 class DepartmentRepository:
     def __init__(self, session: Session):

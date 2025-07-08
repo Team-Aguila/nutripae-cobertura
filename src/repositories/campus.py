@@ -1,8 +1,8 @@
 from datetime import datetime
 from sqlmodel import Session, select, func
-from pae_cobertura.models.campus import Campus
-from pae_cobertura.models.coverage import Coverage
-from pae_cobertura.schemas.campus import CampusCreate, CampusUpdate
+from models.campus import Campus
+from models.coverage import Coverage
+from schemas.campus import CampusCreate, CampusUpdate
 
 class CampusRepository:
     def __init__(self, session: Session):

@@ -3,12 +3,12 @@ from typing import Optional, List
 from uuid import UUID
 from sqlmodel import SQLModel
 
-from pae_cobertura.models.document_type import DocumentType
-from pae_cobertura.models.gender import Gender
-from pae_cobertura.models.grade import Grade
-from pae_cobertura.models.etnic_group import EtnicGroup
-from pae_cobertura.models.disability_type import DisabilityType
-from pae_cobertura.models.coverage import Coverage
+from models.document_type import DocumentType
+from models.gender import Gender
+from models.grade import Grade
+from models.etnic_group import EtnicGroup
+from models.disability_type import DisabilityType
+from models.coverage import Coverage
 
 
 class BeneficiaryBase(SQLModel):

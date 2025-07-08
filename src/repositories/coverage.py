@@ -3,8 +3,8 @@ from uuid import UUID
 from sqlmodel import Session, select
 from sqlalchemy.orm import selectinload
 
-from pae_cobertura.models.coverage import Coverage
-from pae_cobertura.schemas.coverage import CoverageCreate, CoverageUpdate
+from models.coverage import Coverage
+from schemas.coverage import CoverageCreate, CoverageUpdate
 
 class CoverageRepository:
     def __init__(self, session: Session):

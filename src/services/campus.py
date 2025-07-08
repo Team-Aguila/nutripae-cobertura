@@ -1,11 +1,12 @@
 from typing import List, Optional
 from sqlmodel import Session, select
-from pae_cobertura.repositories.campus import CampusRepository
-from pae_cobertura.repositories.coverage import CoverageRepository
-from pae_cobertura.schemas.campus import CampusCreate, CampusUpdate
-from pae_cobertura.models.campus import Campus
-from pae_cobertura.models.institution import Institution
-from pae_cobertura.models.coverage import Coverage
+from repositories.campus import CampusRepository
+from repositories.coverage import CoverageRepository
+from schemas.campus import CampusCreate, CampusUpdate
+from models.campus import Campus
+from models.institution import Institution
+from models.coverage import Coverage
+import logging
 
 class CampusService:
     def __init__(self, session: Session):
@@ -19,6 +20,7 @@ class CampusService:
             raise ValueError(f"Institution with id {institution_id} does not exist")
 
     def create_campus(self, campus_in: CampusCreate) -> dict:
+        logging.info(f"Creating campus: {campus_in}")
         self._validate_institution(campus_in.institution_id)
 
         existing_campus_dane_code = self.session.exec(
@@ -36,12 +38,15 @@ class CampusService:
         return self.repository.create(campus_in=campus_in)
 
     def get_campus(self, campus_id: int) -> Optional[dict]:
+        logging.info(f"Getting campus: {campus_id}")
         return self.repository.get_by_id(campus_id=campus_id)
 
     def get_campuses(self, skip: int = 0, limit: int = 100) -> List[dict]:
+        logging.info(f"Getting campuses: {skip}, {limit}")
         return self.repository.get_all(skip=skip, limit=limit)
 
     def update_campus(self, campus_id: int, campus_in: CampusUpdate) -> dict:
+        logging.info(f"Updating campus: {campus_id}")
         db_campus = self.session.get(Campus, campus_id)
         if not db_campus:
             raise ValueError(f"Campus with id {campus_id} not found")
@@ -67,6 +72,7 @@ class CampusService:
         )
 
     def delete_campus(self, campus_id: int):
+        logging.info(f"Deleting campus: {campus_id}")
         db_campus = self.session.get(Campus, campus_id)
         if not db_campus:
             raise ValueError(f"Campus with id {campus_id} not found")
@@ -74,6 +80,7 @@ class CampusService:
         self.repository.delete(db_campus=db_campus)
 
     def get_coverage_by_campus(self, *, campus_id: int, skip: int = 0, limit: int = 100) -> List[Coverage]:
+        logging.info(f"Getting coverage by campus: {campus_id}, {skip}, {limit}")
         db_campus = self.session.get(Campus, campus_id)
         if not db_campus:
             raise ValueError(f"Campus with id {campus_id} not found")

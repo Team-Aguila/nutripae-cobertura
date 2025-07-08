@@ -12,11 +12,23 @@ dependencies = [
     "sqlmodel[all] (>=0.0.24,<0.0.25)",
     "alembic (>=1.16.1,<2.0.0)",
     "psycopg2-binary (>=2.9.10,<3.0.0)",
-    "python-dotenv (>=1.1.0,<2.0.0)"
+    "python-dotenv (>=1.1.0,<2.0.0)",
+    "python-jose[cryptography] (>=3.3.0,<4.0.0)",
+    "passlib (>=1.7.4,<2.0.0)",
+    "bcrypt (==3.2.0)",
+    "python-multipart (>=0.0.20,<0.0.21)",
+    "prometheus-fastapi-instrumentator (>=7.1.0,<8.0.0)",
+    "prometheus-client (==0.20.0)",
+    "opentelemetry-distro (==0.45b0)",
+    "opentelemetry-instrumentation-fastapi (==0.45b0)",
+    "opentelemetry-instrumentation-logging (==0.45b0)",
+    "opentelemetry-exporter-otlp (==1.24.0)",
+    "uvicorn[standard] (>=0.34.3,<0.35.0)",
+    "httpx (>=0.27.0,<1.0.0)"
 ]
 
 [tool.poetry]
-packages = [{include = "pae_cobertura", from = "src"}]
+packages = [{include = "*", from = "src"}]
 
 
 [tool.poetry.group.dev.dependencies]

@@ -2,8 +2,8 @@ import logging
 import random
 from faker import Faker
 from sqlmodel import Session, select
-from pae_cobertura.database import engine
-from pae_cobertura.models import (
+from database import engine
+from models import (
     DocumentType,
     Gender,
     Grade,
